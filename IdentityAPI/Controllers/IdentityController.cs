@@ -30,6 +30,12 @@ namespace IdentityAPI.Controllers
             config = configuration;
         }
 
+        [HttpGet]
+        public string Get()
+        {
+            return "application working";
+        }
+
         [HttpPost("register", Name = "RegisterUser")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -65,12 +71,12 @@ namespace IdentityAPI.Controllers
             TryValidateModel(model);
             if (ModelState.IsValid)
             {
-                var user = context.Users.SingleOrDefault(s => s.Username.Equals(model.Username) 
+                var user = context.Users.SingleOrDefault(s => s.Username.Equals(model.Username)
                 && s.Password.Equals(model.Password) && s.Status.Equals("Verified"));
                 if (user != null)
                 {
                     var token = GenerateToken(user);
-                    return Ok(new { user.Fullname, user.Email, user.Username,user.Role, Token = token });
+                    return Ok(new { user.Fullname, user.Email, user.Username, user.Role, Token = token });
                 }
                 else
                 {
@@ -114,7 +120,7 @@ namespace IdentityAPI.Controllers
         [NonAction]
         private async Task SendVerificationMailAsync(User user)
         {
-            var userObj = new { user.Id,user.Fullname,user.Email,user.Username};
+            var userObj = new { user.Id, user.Fullname, user.Email, user.Username };
             var messageText = JsonConvert.SerializeObject(userObj);
             StorageAccountHelper accountHelper = new StorageAccountHelper();
             accountHelper.StorageConnectionString = config.GetConnectionString("StorageConnection");
